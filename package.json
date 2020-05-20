@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^1.1.0",
-    "@material-ui/icons": "^1.1.0",
-    "animate.css": "^3.6.1",
-    "chart.js": "^2.7.2",
-    "idb": "^2.1.2",
-    "moment": "^2.22.1",
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/icons": "^4.9.1",
+    "animate.css": "^4.1.0",
+    "chart.js": "^2.9.3",
+    "idb": "^5.0.3",
+    "moment": "^2.26.0",
     "moving-averages": "^4.0.5",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
-    "socket.io": "^2.1.1"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "socket.io": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,9 +25,21 @@
     "deploy": "firebase deploy"
   },
   "devDependencies": {
-    "@types/react": "^16.3.14",
-    "@types/react-dom": "^16.0.5",
-    "@types/socket.io-client": "^1.4.32",
-    "gh-pages": "^1.1.0"
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/socket.io-client": "^1.4.33",
+    "gh-pages": "^2.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
