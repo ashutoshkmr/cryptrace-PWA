@@ -1,7 +1,7 @@
 // @ts-check
 import React, { Component } from "react";
 import "./App.css";
-import { Route, Switch } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Navigation from "./components/Navigation/Navigation";
 import CoinList from "./components/CoinList/CoinList";
 import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
@@ -11,11 +11,13 @@ class App extends Component {
     return (
       <div className="App">
         <Navigation />
-        <Switch>
-          <Route path="/coin_detail" component={CoinDetail} />
-          <Route path="/add_coin" component={CoinDrawer} />
-          <Route path="/"  component={CoinList} />
-        </Switch>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/coin_detail" component={CoinDetail} />
+            <Route path="/add_coin" component={CoinDrawer} />
+            <Route path="/" component={CoinList} />
+          </Switch>
+        </BrowserRouter>
       </div>
     );
   }

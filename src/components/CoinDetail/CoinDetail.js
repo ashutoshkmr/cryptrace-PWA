@@ -1,23 +1,22 @@
 // @ts-check
-import React, { Component } from "react";
-import Card from "@material-ui/core/Card";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader/CardHeader";
-import moment from "moment";
-import ReactDOM from "react-dom";
-import Chart from "chart.js";
-import ShowChart from "@material-ui/icons/ShowChart";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import Grid from "@material-ui/core/Grid/Grid";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Switch from "@material-ui/core/Switch";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import Typography from "@material-ui/core/Typography";
+import ShowChart from "@material-ui/icons/ShowChart";
+import Chart from "chart.js";
+import moment from "moment";
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import * as io from "socket.io-client";
-import CCC from "../../utility/socketParse";
+import CCC from "../../helpers/socketParse";
 import { ma } from "../../moving-averages";
-import Divider from "@material-ui/core/Divider/Divider";
-import Grid from "@material-ui/core/Grid/Grid";
 let chart;
 
 class CoinDetail extends Component {
@@ -31,12 +30,12 @@ class CoinDetail extends Component {
     BB: false,
     AG: false,
     RSI: false,
-    markets: this.props.location.state.markets
+    markets: this.props.location.state.markets,
   };
 
   liveData = {
     price: this.props.location.state.historyPrice,
-    time: this.props.location.state.historyTime
+    time: this.props.location.state.historyTime,
   };
 
   socket = io.connect("https://streamer.cryptocompare.com/");
@@ -67,13 +66,13 @@ class CoinDetail extends Component {
     );
     LivePrice[pair]["CHANGE24HOURPCT"] =
       (
-        (LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]) /
-        LivePrice[pair]["OPEN24HOUR"] *
+        ((LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]) /
+          LivePrice[pair]["OPEN24HOUR"]) *
         100
       ).toFixed(2) + "%";
     this.updateData(LivePrice[pair]);
   }
-  updateData = data => {
+  updateData = (data) => {
     if (data.PRICE && chart) {
       if (this.liveData.price.length > 30) {
         this.liveData.price.shift();
@@ -82,7 +81,7 @@ class CoinDetail extends Component {
       this.liveData.price.push(data.PRICE);
       this.liveData.time.push(moment(data.LASTUPDATE * 1000).format("LLL"));
 
-      chart.data.datasets.forEach(element => {
+      chart.data.datasets.forEach((element) => {
         element.data = this.liveData.price;
       });
       chart.data.labels = this.liveData.time;
@@ -100,7 +99,7 @@ class CoinDetail extends Component {
         borderColor: "blue",
         pointBorderColor: "blue",
         pointBackgroundColor: "#fff",
-        data: this.liveData.ma
+        data: this.liveData.ma,
       });
     }
   }
@@ -110,45 +109,45 @@ class CoinDetail extends Component {
         this.liveData.price.reduce((a, b) => a + b) / this.liveData.price.length
       );
       let Squared_sum_diff_from_mean = this.liveData.price
-        .map(e => Math.pow(mean - e, 2))
+        .map((e) => Math.pow(mean - e, 2))
         .reduce((a, b) => a + b);
       let deviation = Math.sqrt(
         Squared_sum_diff_from_mean / (this.liveData.price.length - 1)
       );
-      let upper_band = this.liveData.price.map(e => e + 2 * deviation);
-      let lower_band = this.liveData.price.map(e => e - 2 * deviation);
+      let upper_band = this.liveData.price.map((e) => e + 2 * deviation);
+      let lower_band = this.liveData.price.map((e) => e - 2 * deviation);
       chart.data.datasets.push({
         fill: false,
         borderColor: "green",
         pointBorderColor: "green",
         pointBackgroundColor: "#fff",
-        data: upper_band
+        data: upper_band,
       });
       chart.data.datasets.push({
         fill: false,
         borderColor: "red",
         pointBorderColor: "red",
         pointBackgroundColor: "#fff",
-        data: lower_band
+        data: lower_band,
       });
     }
   }
   emitSubscription() {
     let subs = "5~CCCAGG~" + this.state.Symbol + "~USD";
     this.socket.emit("SubAdd", {
-      subs: [subs]
+      subs: [subs],
     });
   }
-  handleClick = event => {
+  handleClick = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
-  handleChange = name => event => {
+  handleChange = (name) => (event) => {
     this.setState({ [name]: event.target.checked });
-    if(this.state.MA){
+    if (this.state.MA) {
       this.drawMa();
       chart.update();
     }
-    if(this.state.BB){
+    if (this.state.BB) {
       this.drawBollinger();
     }
     chart.update();
@@ -173,35 +172,35 @@ class CoinDetail extends Component {
             borderColor: "purple",
             pointBorderColor: "purple",
             pointBackgroundColor: "#fff",
-            data: this.liveData.price
-          }
-        ]
+            data: this.liveData.price,
+          },
+        ],
       },
       options: {
         legend: {
-          display: false
+          display: false,
         },
         animation: {
-          duration: 0
+          duration: 0,
         },
         scales: {
           yAxes: [
             {
-              display: false
-            }
+              display: false,
+            },
           ],
           xAxes: [
             {
-              display: false
-            }
-          ]
-        }
-      }
+              display: false,
+            },
+          ],
+        },
+      },
     });
     chart = Linechart;
   };
   componentDidMount() {
-    this.socket.on("m", message => {
+    this.socket.on("m", (message) => {
       let res = {};
       let messageType = message.substring(0, message.indexOf("~"));
 
@@ -229,9 +228,7 @@ class CoinDetail extends Component {
               <CardHeader
                 avatar={
                   <Avatar
-                    src={`https://cryptocompare.com${
-                      this.state.p.coinData.ImageUrl
-                    }`}
+                    src={`https://cryptocompare.com${this.state.p.coinData.ImageUrl}`}
                     aria-label={this.state.p.coinData.CoinName}
                   />
                 }
@@ -262,7 +259,7 @@ class CoinDetail extends Component {
           style={{
             position: "fixed",
             bottom: "10px",
-            right: "5px"
+            right: "5px",
           }}
           aria-label="Graphs"
           id="simple-menu"
@@ -335,8 +332,13 @@ class CoinDetail extends Component {
           </MenuItem>
         </Menu>
         {/* <Divider /> */}
-        <Card style={{marginTop:"25px"}}>
-          <Typography style={{border:'none'}} align="center" gutterBottom={true} variant="headline">
+        <Card style={{ marginTop: "25px" }}>
+          <Typography
+            style={{ border: "none" }}
+            align="center"
+            gutterBottom={true}
+            variant="headline"
+          >
             Markets
           </Typography>
 
@@ -349,7 +351,7 @@ class CoinDetail extends Component {
                       display: "flex",
                       height: "50px",
                       alignItems: "center",
-                      padding: "10px"
+                      padding: "10px",
                     }}
                   >
                     <Typography style={{ minWidth: "50%" }}>

@@ -1,95 +1,27 @@
 // @ts-check
-import React, { Component } from "react";
-import Grid from "@material-ui/core/Grid";
-import Coin from "../Coin/Coin";
-import idb from "idb";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
-const dbPromise = idb.open("CrypTrace", 3, upgradeDB => {
-  upgradeDB.createObjectStore("CoinsList");
-});
+import Grid from "@material-ui/core/Grid";
+import React, { Component } from "react";
+import Coin from "../Coin/Coin";
+import { connect } from "react-redux";
+import { loadcoinsList } from "../../store/coins";
+
 class CoinList extends Component {
-  state = {
-    loading: true,
-    coins: []
-  };
-
-  getCoinList = () => {
-    fetch("https://min-api.cryptocompare.com/data/all/coinlist")
-      .then(reponse => reponse.json())
-      .then(response =>
-        Object.keys(response.Data).map(key => response.Data[key])
-      )
-      .then(data =>
-        data.sort((a, b) => {
-          return parseInt(a.SortOrder, 10) - parseInt(b.SortOrder, 10);
-        })
-      )
-      .then(data =>
-        data.map(coin => {
-          return {
-            Id: coin.Id,
-            ImageUrl: coin.ImageUrl,
-            CoinName: coin.CoinName,
-            Symbol: coin.Symbol,
-            SortOrder: parseInt(coin.SortOrder, 10),
-            checked: false
-          };
-        })
-      )
-      .then(data => {
-        dbPromise.then(db => {
-          let tx = db.transaction("CoinsList", "readwrite");
-          data.forEach(coin => {
-            tx
-              .objectStore("CoinsList")
-              .put(JSON.stringify(coin), coin.SortOrder);
-          });
-          return tx.complete;
-        });
-        this.setState({ coins: data.slice(0, 12), loading: false });
-      })
-      .catch(err => console.log(err));
-  };
-
-  getMyCoinsFromIdb = () => {
-    let myCoins = [];
-    return dbPromise.then(db => {
-      const tx = db.transaction("CoinsList");
-      tx
-        .objectStore("CoinsList")
-        .getAll()
-        .then(coins => {
-          // console.log("fsdsd", keys);
-          coins.forEach(c => {
-            c = JSON.parse(c);
-            if (c.checked) myCoins.push(c);
-          });
-        });
-      return tx.complete.then(() => myCoins);
-    });
-  };
-
   componentDidMount() {
-    this.getMyCoinsFromIdb().then(coins => {
-      if (coins.length <= 0) {
-        this.getCoinList();
-      } else {
-        this.setState({ coins: coins, loading: false });
-      }
-    });
+    this.props.loadcoinsList();
   }
-
   render() {
+    console.log(this.props);
     return (
       <div style={{ flexGrow: 1 }}>
-        {this.state.loading ? (
+        hello world
+        {/* {this.state.loading ? (
           <div style={{ textAlign: "center", marginBottom: "10px" }}>
             <CircularProgress color="primary" />
           </div>
         ) : (
-          <Grid container spacing={24}>
-            {this.state.coins.map(e => {
+          <Grid container spacing={8}>
+            {this.state.coins.map((e) => {
               return (
                 <Grid item xs={12} sm={4} key={e.SortOrder}>
                   <Coin data={e} />
@@ -97,9 +29,22 @@ class CoinList extends Component {
               );
             })}
           </Grid>
-        )}
+        )} */}
       </div>
     );
   }
 }
-export default CoinList;
+
+const mapStateToProps = (state) => {
+  return {
+    coinsList: state.coinsList,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadcoinsList: () => dispatch(loadcoinsList()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoinList);
