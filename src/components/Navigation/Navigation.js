@@ -31,7 +31,7 @@ class Navigation extends Component {
               <Menu />
             </IconButton>
             <Typography
-              variant="title"
+              variant="subtitle1"
               color="inherit"
               className="crypt-nav-title"
             >
