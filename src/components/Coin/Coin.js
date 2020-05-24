@@ -14,39 +14,39 @@ import {
   IconButton,
   Collapse,
   CircularProgress,
-  Button
+  Button,
 } from "@material-ui/core";
 
 import { withStyles } from "@material-ui/core/styles";
 import classnames from "classnames";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-const styles = theme => ({
+const styles = (theme) => ({
   card: {
-    maxWidth: 400
+    maxWidth: 400,
   },
   media: {
     height: 0,
-    paddingTop: "56.25%" // 16:9
+    paddingTop: "56.25%", // 16:9
   },
   actions: {
-    display: "flex"
+    display: "flex",
   },
   expand: {
     transform: "rotate(0deg)",
     transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
+      duration: theme.transitions.duration.shortest,
     }),
-    marginLeft: "auto"
+    marginLeft: "auto",
   },
   expandOpen: {
-    transform: "rotate(180deg)"
-  }
+    transform: "rotate(180deg)",
+  },
 });
 
 class Coin extends Component {
   state = {
-    coinData: this.props.data,
+    coinData: this.props.data.coinInfo,
     loading: true,
     expanded: false,
     price: "",
@@ -55,44 +55,42 @@ class Coin extends Component {
 
   handleExpandClick = () => {
     fetch(
-      `https://min-api.cryptocompare.com/data/histominute?fsym=${
-        this.props.data.Symbol
-      }&tsym=USD&limit=30&aggregate=5&e=CCCAGG`
+      `https://min-api.cryptocompare.com/data/histominute?fsym=${this.props.data.Symbol}&tsym=USD&limit=30&aggregate=5&e=CCCAGG`
     )
-      .then(response => response.json())
-      .then(response => {
+      .then((response) => response.json())
+      .then((response) => {
         this.setState({
           Data: response.Data,
           coinValue: response.Data[response.Data.length - 1],
-          loading: false
+          loading: false,
         });
       })
       .then(() => {
         this.drawChart();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
     this.setState({ expanded: !this.state.expanded });
   };
 
   componentDidMount() {
-    fetch(`https://www.cryptonator.com/api/full/${this.props.data.Symbol}-usd`)
-      .then(data => data.json())
-      .then(data => data["ticker"])
-      .then(data => {
-        this.setState({
-          markets: data.markets,
-          price: "$" + parseFloat(data.price).toFixed(4),
-          change:
-            (data.change[0] === "-" ? "" : "+") +
-            parseFloat(data.change).toFixed(2) +
-            "%"
-        });
-      });
+    // fetch(`https://www.cryptonator.com/api/full/${this.props.data.Symbol}-usd`)
+    //   .then((data) => data.json())
+    //   .then((data) => data["ticker"])
+    //   .then((data) => {
+    //     this.setState({
+    //       // markets: data.markets || [],
+    //       price: "$" + parseFloat(data.price).toFixed(4),
+    //       change:
+    //         (data.change[0] === "-" ? "" : "+") +
+    //         parseFloat(data.change).toFixed(2) +
+    //         "%",
+    //     });
+    //   });
   }
   drawChart = () => {
     let time = [],
       price = [];
-    this.state.Data.map(e => {
+    this.state.Data.map((e) => {
       time.push(moment(parseInt(e.time, 10) * 1000).format("LLL"));
       price.push(e.close);
       return true;
@@ -112,51 +110,51 @@ class Coin extends Component {
             borderColor: "purple",
             pointBorderColor: "purple",
             pointBackgroundColor: "#fff",
-            data: price
-          }
-        ]
+            data: price,
+          },
+        ],
       },
       options: {
         legend: {
-          display: false
+          display: false,
         },
         animation: {
-          duration: 0
+          duration: 0,
         },
         scales: {
           yAxes: [
             {
-              display: false
-            }
+              display: false,
+            },
           ],
           xAxes: [
             {
-              display: false
-            }
-          ]
-        }
-      }
+              display: false,
+            },
+          ],
+        },
+      },
     });
-    this.setState({historyPrice : price, historyTime:time})
+    this.setState({ historyPrice: price, historyTime: time });
   };
   render() {
     const { classes } = this.props;
     return (
       <Card style={{ minHeight: "280px !important" }}>
-          <CardHeader
-            avatar={
-              <Avatar
-                src={`https://cryptocompare.com${this.props.data.ImageUrl}`}
-                aria-label={this.props.data.Symbol}
-                className=""
-              />
-            }
-          title={this.props.data.CoinName + "(" + this.props.data.Symbol + ")"}
+        <CardHeader
+          avatar={
+            <Avatar
+              src={`https://cryptocompare.com${this.state.coinData.ImageUrl}`}
+              aria-label={this.state.coinData.Name}
+              className=""
+            />
+          }
+          title={this.state.coinData.FullName + "(" + this.state.coinData.Name + ")"}
           subheader={this.state.price + " \t" + this.state.change}
           action={
             <IconButton
               className={classnames(classes.expand, {
-                [classes.expandOpen]: this.state.expanded
+                [classes.expandOpen]: this.state.expanded,
               })}
               onClick={this.handleExpandClick}
               aria-expanded={this.state.expanded}
@@ -207,7 +205,7 @@ class Coin extends Component {
                         component={Link}
                         to={{
                           pathname: "/coin_detail",
-                          state: this.state
+                          state: this.state,
                         }}
                       >
                         <Typography>More</Typography>

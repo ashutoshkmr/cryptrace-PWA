@@ -4,32 +4,30 @@ import Grid from "@material-ui/core/Grid";
 import React, { Component } from "react";
 import Coin from "../Coin/Coin";
 import { connect } from "react-redux";
-import { loadcoinsList } from "../../store/coins";
+import { loadcoinsList } from "../../store/topCoins";
 
-class CoinList extends Component {
+class TopCoinsList extends Component {
   componentDidMount() {
     this.props.loadcoinsList();
   }
   render() {
-    console.log(this.props);
     return (
       <div style={{ flexGrow: 1 }}>
-        hello world
-        {/* {this.state.loading ? (
+        {this.props.loading ? (
           <div style={{ textAlign: "center", marginBottom: "10px" }}>
             <CircularProgress color="primary" />
           </div>
         ) : (
           <Grid container spacing={8}>
-            {this.state.coins.map((e) => {
+            {this.props.topCoins.coins.map((e) => {
               return (
-                <Grid item xs={12} sm={4} key={e.SortOrder}>
+                <Grid item xs={12} sm={4} key={e.coinInfo.Id}>
                   <Coin data={e} />
                 </Grid>
               );
             })}
           </Grid>
-        )} */}
+        )}
       </div>
     );
   }
@@ -37,7 +35,7 @@ class CoinList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    coinsList: state.coinsList,
+    topCoins: state.entities.topCoins,
   };
 };
 
@@ -47,4 +45,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoinList);
+export default connect(mapStateToProps, mapDispatchToProps)(TopCoinsList);

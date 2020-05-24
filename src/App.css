@@ -1,4 +1,10 @@
-.App{
-    margin-top: 70px;
-
+:root {
+    --Solitude: #eeeff1;
 }
+
+/* .main {
+    margin-top: 64px;
+    background-color: var(--Solitude);
+    height: calc(100vh - 64px);
+    padding: 0 24px;
+} */

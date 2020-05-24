@@ -157,7 +157,6 @@ class CoinDetail extends Component {
     this.setState({ anchorEl: null });
   };
   drawChart = () => {
-    console.log(this.liveData);
     let context = ReactDOM.findDOMNode(this)
       // @ts-ignore
       .getElementsByTagName("canvas")[0]
@@ -218,7 +217,6 @@ class CoinDetail extends Component {
   }
   render() {
     const { anchorEl } = this.state;
-    console.log(this.state.markets);
     let c = this.state.p.change[0] === "-" ? "red" : "green";
     return (
       <div>

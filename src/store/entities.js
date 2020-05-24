@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import coinsReducer from "./coins";
+import topCoinsReducer from "./topCoins";
 import favouritesReducer from "./favourites";
 
 export default combineReducers({
-  coinsList: coinsReducer,
+  topCoins: topCoinsReducer,
   favourites: favouritesReducer,
 });

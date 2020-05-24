@@ -20,7 +20,7 @@ const theme = createMuiTheme({
   },
 });
 
-const app = (
+const Main = () => (
   <BrowserRouter>
     <MuiThemeProvider theme={theme}>
       <Provider store={store}>
@@ -30,10 +30,5 @@ const app = (
   </BrowserRouter>
 );
 
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById("root")
-);
-registerServiceWorker();
+ReactDOM.render(<Main />, document.getElementById("root"));
+// registerServiceWorker();

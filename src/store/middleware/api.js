@@ -1,10 +1,15 @@
 import axios from "axios";
 import * as actions from "../apiActions";
 
+const axiosInstance = axios.create({
+  baseURL: "https://min-api.cryptocompare.com",
+  params: {
+    api_key: "b55bbc60475233e1c108a755950a18c8773fae47f2a2b908f66baeeaf50bc458",
+  },
+});
+
 const api = ({ dispatch }) => (next) => async (action) => {
   if (action.type !== actions.apiCallBegan.type) return next(action);
-
-  console.log(action);
 
   const { url, params, onStart, onSuccess, onError } = action.payload;
 
@@ -13,7 +18,7 @@ const api = ({ dispatch }) => (next) => async (action) => {
   next(action);
 
   try {
-    const response = axios.get(url, { params });
+    const response = await axiosInstance.get(url, { params });
     // @ts-ignore
     dispatch(actions.apiCallSuccess(response.data));
     // @ts-ignore
