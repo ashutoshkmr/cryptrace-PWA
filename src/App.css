@@ -2,6 +2,10 @@
     --Solitude: #eeeff1;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 /* .main {
     margin-top: 64px;
     background-color: var(--Solitude);

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.9.14",
+    "@material-ui/core": "^4.10.0",
     "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.3.6",
     "animate.css": "^4.1.0",
@@ -14,10 +14,13 @@
     "moment": "^2.26.0",
     "moving-averages": "^4.0.5",
     "react": "^16.13.1",
+    "react-content-loader": "^5.0.4",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "react-tooltip": "^4.2.6",
+    "react-window": "^1.8.5",
     "socket.io": "^2.3.0"
   },
   "scripts": {

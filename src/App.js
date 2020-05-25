@@ -1,51 +1,29 @@
-import AppBar from "@material-ui/core/AppBar";
+import { Drawer, Tooltip, Avatar, Typography } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
+import { AccountBalance, Forum, Home, Star } from "@material-ui/icons";
+import AppsIcon from "@material-ui/icons/Apps";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import MailIcon from "@material-ui/icons/Mail";
-import MenuIcon from "@material-ui/icons/Menu";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import clsx from "clsx";
-import React from "react";
-import { Route, Switch, Link } from "react-router-dom";
+import React, { Fragment } from "react";
+import { Link, Route, Switch } from "react-router-dom";
 import CoinDetail from "./components/CoinDetail/CoinDetail";
 import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
-import TopCoinsList from "./components/TopCoinsList/TopCoinsList";
-import { Add } from "@material-ui/icons";
+import HomePage from "./components/HomePage/HomePage";
+import ReactTooltip from "react-tooltip";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
   },
   hide: {
     display: "none",
@@ -76,19 +54,49 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "space-evenly",
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    marginTop: 64,
     backgroundColor: "#eeeff1",
-    height: `calc(100vh - 64px)`,
+    height: "100vh",
+  },
+  link: {
+    textDecoration: "none",
+    color: "initial",
   },
 }));
+
+const pages = [
+  {
+    title: "Home",
+    icon: <Home />,
+    link: "/",
+  },
+  {
+    title: "Coins List",
+    icon: <AppsIcon />,
+    link: "allcoins",
+  },
+  {
+    title: "Favourites",
+    icon: <Star />,
+    link: "/favourites",
+  },
+  {
+    title: "Markets",
+    icon: <AccountBalance />,
+    link: "/markets",
+  },
+  {
+    title: "News",
+    icon: <Forum />,
+    link: "/news",
+  },
+];
 
 export default function App() {
   const classes = useStyles();
@@ -106,31 +114,8 @@ export default function App() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar
-        elevation={0}
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Mini variant drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Drawer
+        elevation={0}
         variant="permanent"
         className={clsx(classes.drawer, {
           [classes.drawerOpen]: open,
@@ -144,31 +129,44 @@ export default function App() {
         }}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
+          {!open ? (
+            <Avatar
+              onClick={handleDrawerOpen}
+              src="/icon-192.png"
+              aria-label="Cryptrace"
+              className="pointer"
+            />
+          ) : (
+            <div onClick={handleDrawerOpen} className="pointer">
+              <Avatar src="/icon-192.png" aria-label="Cryptrace" />
+              <Typography variant="subtitle1">CrypTrace</Typography>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </div>
+          )}
         </div>
         <Divider />
         <List>
-          <Link to="/add_coin">
-            <ListItem button key={"Coins"}>
-              <ListItemIcon>
-                <Add />
-              </ListItemIcon>
-              <ListItemText primary={"Coins"} />
-            </ListItem>
-          </Link>
+          {pages.map((p) => {
+            return (
+              <Link className={classes.link} to={p.link} key={p.title}>
+                <Tooltip title={p.title} arrow>
+                  <ListItem button key={p.title} data-for={p.title}>
+                    <ListItemIcon>{p.icon}</ListItemIcon>
+                    <ListItemText primary={p.title} />
+                  </ListItem>
+                </Tooltip>
+              </Link>
+            );
+          })}
         </List>
       </Drawer>
       <main className={classes.content}>
         <Switch>
-          <Route path="/coin_detail" component={CoinDetail} />
-          <Route path="/add_coin" component={CoinDrawer} />
-          <Route path="/" component={TopCoinsList} />
+          <Route path="/allcoins" component={CoinDrawer} />
+          <Route path="/:id" component={CoinDetail} />
+          <Route exact path="/" component={HomePage} />
         </Switch>
       </main>
     </div>

@@ -20,27 +20,27 @@ import { ma } from "../../moving-averages";
 let chart;
 
 class CoinDetail extends Component {
-  state = {
-    p: this.props.location.state,
-    Symbol: this.props.location.state.coinData.Symbol,
-    change: "",
-    price: "",
-    anchorEl: null,
-    MA: false,
-    BB: false,
-    AG: false,
-    RSI: false,
-    markets: this.props.location.state.markets,
-  };
+  // state = {
+  //   p: this.props.location.state,
+  //   Symbol: this.props.location.state.coinData.Symbol,
+  //   change: "",
+  //   price: "",
+  //   anchorEl: null,
+  //   MA: false,
+  //   BB: false,
+  //   AG: false,
+  //   RSI: false,
+  //   markets: this.props.location.state.markets,
+  // };
 
-  liveData = {
-    price: this.props.location.state.historyPrice,
-    time: this.props.location.state.historyTime,
-  };
+  // liveData = {
+  //   price: this.props.location.state.historyPrice,
+  //   time: this.props.location.state.historyTime,
+  // };
 
   socket = io.connect("https://streamer.cryptocompare.com/");
 
-  dataUnpack(data) {
+  unpackLiveData(data) {
     let to = data["TOSYMBOL"];
     let from = data["FROMSYMBOL"];
     let tsym = CCC.STATIC.CURRENCY.getSymbol(to);
@@ -199,173 +199,184 @@ class CoinDetail extends Component {
     chart = Linechart;
   };
   componentDidMount() {
-    this.socket.on("m", (message) => {
-      let res = {};
-      let messageType = message.substring(0, message.indexOf("~"));
+    console.log(this.props);
+    const coinId = parseInt(this.props.match.params.id, 10);
+    const coin =
+      this.props.location.state && this.props.location.state.coin
+        ? this.props.location.state.coin
+        : null;
+    if (!coinId || !coin) {
+      this.props.history.replace("/");
+    } else {
+      this.socket.on("m", (message) => {
+        let res = {};
+        let messageType = message.substring(0, message.indexOf("~"));
 
-      if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
-        res = CCC.CURRENT.unpack(message);
-        this.dataUnpack(res);
-      }
-    });
-    this.drawChart();
-    this.emitSubscription();
+        if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
+          res = CCC.CURRENT.unpack(message);
+          this.unpackLiveData(res);
+        }
+      });
+      // this.drawChart();
+      // this.emitSubscription();
+    }
   }
   componentWillUnmount() {
     // @ts-ignore
-    this.socket.disconnect();
+    // this.socket.disconnect();
   }
   render() {
-    const { anchorEl } = this.state;
-    let c = this.state.p.change[0] === "-" ? "red" : "green";
-    return (
-      <div>
-        <Card>
-          <div style={{ display: "flex" }}>
-            <div style={{ width: "50%" }}>
-              <CardHeader
-                avatar={
-                  <Avatar
-                    src={`https://cryptocompare.com${this.state.p.coinData.ImageUrl}`}
-                    aria-label={this.state.p.coinData.CoinName}
-                  />
-                }
-                title={this.state.p.coinData.CoinName}
-              />
-            </div>
-            <div style={{ width: "50%" }} className="MuiCardHeader-root-103">
-              <div style={{ display: "flex", width: "100%" }}>
-                <Typography style={{ textAlign: "right", width: "50%" }}>
-                  {this.state.p.price}
-                </Typography>
-                <Typography
-                  style={{ textAlign: "right", width: "50%", color: c }}
-                >
-                  {this.state.p.change}
-                </Typography>
-              </div>
-            </div>
-          </div>
-        </Card>
+    // const { anchorEl } = this.state;
+    // let c = this.state.p.change[0] === "-" ? "red" : "green";
+    // return (
+    //   <div>
+    //     <Card>
+    //       <div style={{ display: "flex" }}>
+    //         <div style={{ width: "50%" }}>
+    //           <CardHeader
+    //             avatar={
+    //               <Avatar
+    //                 src={`https://cryptocompare.com${this.state.p.coinData.ImageUrl}`}
+    //                 aria-label={this.state.p.coinData.CoinName}
+    //               />
+    //             }
+    //             title={this.state.p.coinData.CoinName}
+    //           />
+    //         </div>
+    //         <div style={{ width: "50%" }} className="MuiCardHeader-root-103">
+    //           <div style={{ display: "flex", width: "100%" }}>
+    //             <Typography style={{ textAlign: "right", width: "50%" }}>
+    //               {this.state.p.price}
+    //             </Typography>
+    //             <Typography
+    //               style={{ textAlign: "right", width: "50%", color: c }}
+    //             >
+    //               {this.state.p.change}
+    //             </Typography>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </Card>
 
-        <Card>
-          <canvas />
-        </Card>
-        <Button
-          variant="fab"
-          color="primary"
-          style={{
-            position: "fixed",
-            bottom: "10px",
-            right: "5px",
-          }}
-          aria-label="Graphs"
-          id="simple-menu"
-          aria-owns={anchorEl ? "simple-menu" : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-        >
-          <ShowChart />
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-        >
-          <MenuItem>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.MA}
-                  onChange={this.handleChange("MA")}
-                  value="Moving Average"
-                  color="primary"
-                />
-              }
-              label="Moving Average"
-            />
-          </MenuItem>
-          <MenuItem>
-            {" "}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.BB}
-                  onChange={this.handleChange("BB")}
-                  value="Bollinger Bands"
-                  color="primary"
-                />
-              }
-              label="Bollinger Bands"
-            />
-          </MenuItem>
-          <MenuItem>
-            {" "}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.AG}
-                  onChange={this.handleChange("AG")}
-                  value="Alligator"
-                  color="primary"
-                />
-              }
-              label="Alligator"
-            />
-          </MenuItem>
-          <MenuItem>
-            {" "}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.RSI}
-                  onChange={this.handleChange("RSI")}
-                  value="RSI"
-                  color="primary"
-                />
-              }
-              label="RSI"
-            />
-          </MenuItem>
-        </Menu>
-        {/* <Divider /> */}
-        <Card style={{ marginTop: "25px" }}>
-          <Typography
-            style={{ border: "none" }}
-            align="center"
-            gutterBottom={true}
-            variant="headline"
-          >
-            Markets
-          </Typography>
+    //     <Card>
+    //       <canvas />
+    //     </Card>
+    //     <Button
+    //       variant="fab"
+    //       color="primary"
+    //       style={{
+    //         position: "fixed",
+    //         bottom: "10px",
+    //         right: "5px",
+    //       }}
+    //       aria-label="Graphs"
+    //       id="simple-menu"
+    //       aria-owns={anchorEl ? "simple-menu" : null}
+    //       aria-haspopup="true"
+    //       onClick={this.handleClick}
+    //     >
+    //       <ShowChart />
+    //     </Button>
+    //     <Menu
+    //       id="simple-menu"
+    //       anchorEl={anchorEl}
+    //       open={Boolean(anchorEl)}
+    //       onClose={this.handleClose}
+    //     >
+    //       <MenuItem>
+    //         <FormControlLabel
+    //           control={
+    //             <Switch
+    //               checked={this.state.MA}
+    //               onChange={this.handleChange("MA")}
+    //               value="Moving Average"
+    //               color="primary"
+    //             />
+    //           }
+    //           label="Moving Average"
+    //         />
+    //       </MenuItem>
+    //       <MenuItem>
+    //         {" "}
+    //         <FormControlLabel
+    //           control={
+    //             <Switch
+    //               checked={this.state.BB}
+    //               onChange={this.handleChange("BB")}
+    //               value="Bollinger Bands"
+    //               color="primary"
+    //             />
+    //           }
+    //           label="Bollinger Bands"
+    //         />
+    //       </MenuItem>
+    //       <MenuItem>
+    //         {" "}
+    //         <FormControlLabel
+    //           control={
+    //             <Switch
+    //               checked={this.state.AG}
+    //               onChange={this.handleChange("AG")}
+    //               value="Alligator"
+    //               color="primary"
+    //             />
+    //           }
+    //           label="Alligator"
+    //         />
+    //       </MenuItem>
+    //       <MenuItem>
+    //         {" "}
+    //         <FormControlLabel
+    //           control={
+    //             <Switch
+    //               checked={this.state.RSI}
+    //               onChange={this.handleChange("RSI")}
+    //               value="RSI"
+    //               color="primary"
+    //             />
+    //           }
+    //           label="RSI"
+    //         />
+    //       </MenuItem>
+    //     </Menu>
+    //     {/* <Divider /> */}
+    //     <Card style={{ marginTop: "25px" }}>
+    //       <Typography
+    //         style={{ border: "none" }}
+    //         align="center"
+    //         gutterBottom={true}
+    //         variant="headline"
+    //       >
+    //         Markets
+    //       </Typography>
 
-          <Grid container spacing={24}>
-            {this.state.markets.map((market, index) => {
-              return (
-                <Grid item xs={12} sm={3} key={index}>
-                  <Card
-                    style={{
-                      display: "flex",
-                      height: "50px",
-                      alignItems: "center",
-                      padding: "10px",
-                    }}
-                  >
-                    <Typography style={{ minWidth: "50%" }}>
-                      {market.market}
-                    </Typography>
-                    <Typography style={{ textAlign: "right", minWidth: "50%" }}>
-                      ${parseFloat(market.price).toFixed(2)}
-                    </Typography>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Card>
-      </div>
-    );
+    //       <Grid container spacing={24}>
+    //         {this.state.markets.map((market, index) => {
+    //           return (
+    //             <Grid item xs={12} sm={3} key={index}>
+    //               <Card
+    //                 style={{
+    //                   display: "flex",
+    //                   height: "50px",
+    //                   alignItems: "center",
+    //                   padding: "10px",
+    //                 }}
+    //               >
+    //                 <Typography style={{ minWidth: "50%" }}>
+    //                   {market.market}
+    //                 </Typography>
+    //                 <Typography style={{ textAlign: "right", minWidth: "50%" }}>
+    //                   ${parseFloat(market.price).toFixed(2)}
+    //                 </Typography>
+    //               </Card>
+    //             </Grid>
+    //           );
+    //         })}
+    //       </Grid>
+    //     </Card>
+    //   </div>
+    // );
+    return <div>Vada PAv</div>;
   }
 }
 export default CoinDetail;
