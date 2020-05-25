@@ -17,7 +17,7 @@ const slice = createSlice({
     coinsListReceived: (topCoins, action) => {
       topCoins.coins = action.payload.Data.map((e) => ({
         coinInfo: e.CoinInfo,
-        display: e.Display,
+        display: e.DISPLAY.USD,
       }));
       topCoins.loading = false;
     },
