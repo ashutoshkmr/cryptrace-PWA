@@ -8,6 +8,7 @@ const slice = createSlice({
     coins: [],
     sortOrder: [],
     loading: true,
+    hasError: false,
   },
   reducers: {
     coinsListRequested: (topCoins, action) => {
@@ -20,10 +21,12 @@ const slice = createSlice({
         display: e.DISPLAY.USD,
       }));
       topCoins.loading = false;
+      topCoins.hasError = false;
     },
 
     coinsListRequestFailed: (topCoins, action) => {
       topCoins.loading = false;
+      topCoins.hasError = true;
     },
   },
 });
