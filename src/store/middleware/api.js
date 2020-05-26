@@ -18,7 +18,16 @@ const api = ({ dispatch }) => (next) => async (action) => {
   next(action);
 
   try {
-    const response = await axiosInstance.get(url, { params });
+    // workaround for
+    //  https://github.com/axios/axios/issues/2190
+
+    const fixedParams = {
+      ...params,
+      api_key:
+        "b55bbc60475233e1c108a755950a18c8773fae47f2a2b908f66baeeaf50bc458",
+    };
+
+    const response = await axiosInstance.get(url, { params: fixedParams });
     // @ts-ignore
     dispatch(actions.apiCallSuccess(response.data));
     // @ts-ignore
