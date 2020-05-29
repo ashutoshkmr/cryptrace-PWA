@@ -1,4 +1,4 @@
-import { Drawer, Tooltip, Avatar, Typography } from "@material-ui/core";
+import { Avatar, Drawer, Tooltip, Typography } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -10,14 +10,12 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { AccountBalance, Forum, Home, Star } from "@material-ui/icons";
 import AppsIcon from "@material-ui/icons/Apps";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
 import CoinDetail from "./components/CoinDetail/CoinDetail";
 import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
 import HomePage from "./components/HomePage/HomePage";
-import ReactTooltip from "react-tooltip";
 
 const drawerWidth = 240;
 
@@ -87,14 +85,29 @@ const pages = [
     link: "/favourites",
   },
   {
-    title: "Markets",
-    icon: <AccountBalance />,
-    link: "/markets",
-  },
-  {
     title: "News",
     icon: <Forum />,
     link: "/news",
+  },
+  {
+    title: "Exchanges",
+    icon: <AccountBalance />,
+    link: "/exchanges",
+    // https://min-api.cryptocompare.com/data/exchanges/general
+  },
+  {
+    title: "Wallets",
+    icon: <AccountBalance />,
+    link: "/wallets",
+    // https://min-api.cryptocompare.com/data/wallets/general
+  },
+  {
+    title: "Mining",
+    icon: <AccountBalance />,
+    link: "/pools",
+    // https://min-api.cryptocompare.com/data/mining/pools/general
+    // https://min-api.cryptocompare.com/data/mining/companies/general
+    // https://min-api.cryptocompare.com/data/cards/general
   },
 ];
 
@@ -165,7 +178,7 @@ export default function App() {
       <main className={classes.content}>
         <Switch>
           <Route path="/allcoins" component={CoinDrawer} />
-          <Route path="/:id" component={CoinDetail} />
+          <Route path="/:symbol" component={CoinDetail} />
           <Route exact path="/" component={HomePage} />
         </Switch>
       </main>
