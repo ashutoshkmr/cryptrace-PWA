@@ -9,7 +9,7 @@ const errorStyle = {
   alignItems: "center",
 };
 
-export const ShowError = ({ errorMessage }) => {
+export const ShowError = ({ errorMessage = "Something went worng." }) => {
   return (
     <div
       // @ts-ignore
