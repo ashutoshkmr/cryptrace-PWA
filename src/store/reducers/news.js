@@ -42,12 +42,11 @@ export const {
 export default slice.reducer;
 
 export const loadcoinsList = () => {
-  const url = "/data/top/totalvolfull";
+  const url = "/data/v2/news/";
   return apiCallBegan({
     url,
     params: {
-      limit: 100,
-      tsym: "USD",
+      lang: "EN",
     },
     onStart: newsListRequested.type,
     onSuccess: newsListReceived.type,

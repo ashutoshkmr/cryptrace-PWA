@@ -42,13 +42,10 @@ export const {
 export default slice.reducer;
 
 export const loadcoinsList = () => {
-  const url = "/data/top/totalvolfull";
+  const url = "/data/wallets/general";
   return apiCallBegan({
     url,
-    params: {
-      limit: 100,
-      tsym: "USD",
-    },
+    params: {},
     onStart: walletListRequested.type,
     onSuccess: walletListReceived.type,
     onError: walletListRequestFailed.type,
