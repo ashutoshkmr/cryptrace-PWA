@@ -5,7 +5,7 @@ import { apiCallBegan } from "../apiActions";
 const slice = createSlice({
   name: "news",
   initialState: {
-    news: [],
+    newsList: [],
     loading: true,
     hasError: false,
     errorMsg: "",
@@ -17,10 +17,7 @@ const slice = createSlice({
     },
 
     newsListReceived: (news, action) => {
-      news.coins = action.payload.Data.map((e) => ({
-        coinInfo: e.CoinInfo,
-        display: e.DISPLAY.USD,
-      }));
+      news.newsList = action.payload.Data;
       news.loading = false;
       news.hasError = false;
     },
@@ -41,7 +38,7 @@ export const {
 
 export default slice.reducer;
 
-export const loadcoinsList = () => {
+export const fetchNewsList = () => {
   const url = "/data/v2/news/";
   return apiCallBegan({
     url,
