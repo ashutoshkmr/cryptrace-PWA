@@ -6,35 +6,42 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
   Tooltip,
-  TableHead,
+  Typography,
 } from "@material-ui/core";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
-import { loadcoinsList } from "../../store/topCoins";
 import { BulletList } from "react-content-loader";
-
+import { connect } from "react-redux";
+import { fetchTopCoins } from "../../store/reducers/topCoins";
+import { ShowError } from "../error/error";
+import { Favourites } from "../favourites/Favourites";
+import "./HomePage.css";
 class HomePage extends Component {
   componentDidMount() {
-    this.props.loadcoinsList();
+    this.props.fetchTopCoins();
   }
 
-  navigatetoCoinsDetailPage = (coin, coinId) => {
-    this.props.history.push(`/${coinId}`, { coin });
+  navigatetoCoinsDetailPage = (coinSymbol) => {
+    this.props.history.push(`/${coinSymbol}`);
   };
 
   render() {
     return (
       <Fragment>
-        <div>Display Favourite here</div>
-        <div className="topCoinList"></div>
+        {this.props.favourites && this.props.favourites.length > 0 ? (
+          <div className="favourites-container">
+            <Favourites></Favourites>
+          </div>
+        ) : (
+          <Fragment />
+        )}
         {this.props.topCoins.loading ? (
           <BulletList />
-        ) : (
+        ) : !this.props.topCoins.hasError ? (
           <TableContainer component={Paper}>
-            <Table stickyHeader aria-label="simple table">
+            <Table stickyHeader aria-label="Top Coins in 24hr">
               <TableHead>
                 <TableRow>
                   {[
@@ -52,7 +59,7 @@ class HomePage extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.props.topCoins.coins.map((row) => {
+                {this.props.topCoins.coinList.map((row) => {
                   const coinInfo = row.coinInfo;
                   const priceInfo = row.display;
                   return (
@@ -60,7 +67,7 @@ class HomePage extends Component {
                       hover
                       key={coinInfo.Name}
                       onClick={(event) =>
-                        this.navigatetoCoinsDetailPage(row, coinInfo.Id)
+                        this.navigatetoCoinsDetailPage(coinInfo.Name)
                       }
                     >
                       <TableCell component="th" scope="row">
@@ -70,22 +77,30 @@ class HomePage extends Component {
                         />
                       </TableCell>
                       <TableCell>
-                        {`${coinInfo.FullName} (${coinInfo.Name})`}
+                        <Typography variant="subtitle1">
+                          {`${coinInfo.FullName} (${coinInfo.Name})`}
+                        </Typography>
                       </TableCell>
                       <TableCell>{priceInfo.PRICE}</TableCell>
                       <TableCell>
                         <Tooltip title="Change in 24 hour" arrow>
-                          <Fragment>{priceInfo.CHANGE24HOUR}</Fragment>
+                          <Typography variant="subtitle1">
+                            {priceInfo.CHANGE24HOUR}
+                          </Typography>
                         </Tooltip>
                       </TableCell>
                       <TableCell>
                         <Tooltip title="Percentage Change in 24 hour" arrow>
-                          <Fragment>{priceInfo.CHANGEPCT24HOUR}</Fragment>
+                          <Typography variant="subtitle1">
+                            {priceInfo.CHANGEPCT24HOUR}
+                          </Typography>
                         </Tooltip>
                       </TableCell>
                       <TableCell>
                         <Tooltip title="Market Cap." arrow>
-                          <Fragment>{priceInfo.MKTCAP}</Fragment>
+                          <Typography variant="subtitle1">
+                            {priceInfo.MKTCAP}
+                          </Typography>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
@@ -94,6 +109,8 @@ class HomePage extends Component {
               </TableBody>
             </Table>
           </TableContainer>
+        ) : (
+          <ShowError errorMessage={this.props.topCoins.errorMsg} />
         )}
       </Fragment>
     );
@@ -103,12 +120,13 @@ class HomePage extends Component {
 const mapStateToProps = (state) => {
   return {
     topCoins: state.entities.topCoins,
+    favourites: [],
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loadcoinsList: () => dispatch(loadcoinsList()),
+    fetchTopCoins: () => dispatch(fetchTopCoins()),
   };
 };
 

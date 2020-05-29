@@ -1,22 +1,23 @@
 // @ts-nocheck
 import { createSlice } from "@reduxjs/toolkit";
-import { apiCallBegan } from "./apiActions";
+import { apiCallBegan } from "../apiActions";
 
 const slice = createSlice({
   name: "topCoins",
   initialState: {
-    coins: [],
-    sortOrder: [],
+    coinList: [],
     loading: true,
     hasError: false,
+    errorMsg: "",
   },
   reducers: {
-    coinsListRequested: (topCoins, action) => {
+    topCoinsRequested: (topCoins, action) => {
       topCoins.loading = true;
+      topCoins.hasError = false;
     },
 
-    coinsListReceived: (topCoins, action) => {
-      topCoins.coins = action.payload.Data.map((e) => ({
+    topCoinsReceived: (topCoins, action) => {
+      topCoins.coinList = action.payload.Data.map((e) => ({
         coinInfo: e.CoinInfo,
         display: e.DISPLAY.USD,
       }));
@@ -24,22 +25,23 @@ const slice = createSlice({
       topCoins.hasError = false;
     },
 
-    coinsListRequestFailed: (topCoins, action) => {
+    topCoinsRequestFailed: (topCoins, action) => {
       topCoins.loading = false;
       topCoins.hasError = true;
+      topCoins.errorMsg = action.payload;
     },
   },
 });
 
 export const {
-  coinsListReceived,
-  coinsListRequested,
-  coinsListRequestFailed,
+  topCoinsRequested,
+  topCoinsReceived,
+  topCoinsRequestFailed,
 } = slice.actions;
 
 export default slice.reducer;
 
-export const loadcoinsList = () => {
+export const fetchTopCoins = () => {
   const url = "/data/top/totalvolfull";
   return apiCallBegan({
     url,
@@ -47,8 +49,8 @@ export const loadcoinsList = () => {
       limit: 100,
       tsym: "USD",
     },
-    onStart: coinsListRequested.type,
-    onSuccess: coinsListReceived.type,
-    onError: coinsListRequestFailed.type,
+    onStart: topCoinsRequested.type,
+    onSuccess: topCoinsReceived.type,
+    onError: topCoinsRequestFailed.type,
   });
 };
