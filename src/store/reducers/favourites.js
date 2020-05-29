@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { apiCallBegan } from "./apiActions";
-import idbService from "../services/idbService";
+import { apiCallBegan } from "../apiActions";
+import idbService from "../../services/idbService";
 
 const slice = createSlice({
   name: "favourites",
@@ -27,7 +27,7 @@ const slice = createSlice({
     },
 
     removeFromFavouritesRequestFailed: (favourites, action) => {
-      const idx = favourites.coins.findIndex();
+      // const idx = favourites.coins.findIndex();
     },
   },
 });
@@ -41,6 +41,7 @@ export const {
 export default slice.reducer;
 
 export const loadfavourites = () =>
+  // @ts-ignore
   apiCallBegan({
     onStart: favouritesRequested.type,
     onSuccess: favouritesReceived.type,

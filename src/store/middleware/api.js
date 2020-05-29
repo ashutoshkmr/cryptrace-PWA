@@ -13,7 +13,7 @@ const api = ({ dispatch }) => (next) => async (action) => {
 
   const { url, params, onStart, onSuccess, onError } = action.payload;
 
-  if (onStart) dispatch({ type: onStart });
+  if (onStart) dispatch({ type: onStart, payload: action.payload });
 
   next(action);
 
