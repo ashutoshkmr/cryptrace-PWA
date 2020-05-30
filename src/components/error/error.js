@@ -11,10 +11,7 @@ const errorStyle = {
 
 export const ShowError = ({ errorMessage = "Something went worng." }) => {
   return (
-    <div
-      // @ts-ignore
-      style={{ ...errorStyle }}
-    >
+    <div style={{ ...errorStyle }}>
       <Typography variant="overline">{errorMessage}</Typography>
       <Typography variant="caption">
         This may occur due to some browser extention

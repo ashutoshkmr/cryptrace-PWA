@@ -13,11 +13,8 @@ const slice = createSlice({
   },
   reducers: {
     coinRequested: (currentCoin, action) => {
-      if (action.type == coinRequested.type) {
-        currentCoin.loadingcoinData = true;
-
-        currentCoin.coinSymbol = action.payload.coinSymbol;
-      }
+      currentCoin.loadingcoinData = true;
+      currentCoin.coinSymbol = action.payload.params.fsyms;
     },
 
     coinReceived: (currentCoin, action) => {
@@ -42,23 +39,6 @@ export const fetchCurrentCoin = (coinSymbol) => {
   // @ts-ignore
   return apiCallBegan({
     url,
-    coinSymbol,
-    params: {
-      fsyms: coinSymbol,
-      tsyms: "USD",
-    },
-    onStart: coinRequested.type,
-    onSuccess: coinReceived.type,
-    onError: coinRequestFailed.type,
-  });
-};
-
-export const fetchChartData = (coinSymbol) => {
-  const url = "data/v2/histominute";
-  // @ts-ignore
-  return apiCallBegan({
-    url,
-    coinSymbol,
     params: {
       fsyms: coinSymbol,
       tsyms: "USD",
