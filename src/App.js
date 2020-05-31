@@ -8,8 +8,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { AccountBalance, Forum, Home, Star } from "@material-ui/icons";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import AppsIcon from "@material-ui/icons/Apps";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import GavelIcon from "@material-ui/icons/Gavel";
 import clsx from "clsx";
 import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
@@ -100,17 +102,15 @@ const pages = [
     title: "Exchanges",
     icon: <AccountBalance />,
     link: "/exchanges",
-    // https://min-api.cryptocompare.com/data/exchanges/general
   },
   {
     title: "Wallets",
-    icon: <AccountBalance />,
+    icon: <AccountBalanceWalletIcon />,
     link: "/wallets",
-    // https://min-api.cryptocompare.com/data/wallets/general
   },
   {
     title: "Mining",
-    icon: <AccountBalance />,
+    icon: <GavelIcon />,
     link: "/pools",
     // https://min-api.cryptocompare.com/data/mining/pools/general
     // https://min-api.cryptocompare.com/data/mining/companies/general
