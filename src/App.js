@@ -88,11 +88,11 @@ const pages = [
     icon: <AppsIcon />,
     link: "allcoins",
   },
-  {
-    title: "Favourites",
-    icon: <Star />,
-    link: "/favourites",
-  },
+  // {
+  //   title: "Favourites",
+  //   icon: <Star />,
+  //   link: "/favourites",
+  // },
   {
     title: "News",
     icon: <Forum />,
