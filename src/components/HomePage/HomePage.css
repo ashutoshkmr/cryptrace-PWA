@@ -1,3 +1,7 @@
+.homepage-container {
+    padding: 24px;
+}
+
 .favourites-container {
     height: 240px;
     display: flex;

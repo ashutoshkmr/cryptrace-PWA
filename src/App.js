@@ -15,7 +15,9 @@ import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
 import CoinDetail from "./components/CoinDetail/CoinDetail";
 import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
+import Exchanges from "./components/exchanges/Exchanges";
 import HomePage from "./components/HomePage/HomePage";
+import News from "./components/news/news";
 
 const drawerWidth = 240;
 
@@ -56,9 +58,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
   },
+  brandExpanded: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
     backgroundColor: "#eeeff1",
     height: "100vh",
   },
@@ -150,7 +157,7 @@ export default function App() {
               className="pointer"
             />
           ) : (
-            <div onClick={handleDrawerOpen} className="pointer">
+            <div className={classes.brandExpanded}>
               <Avatar src="/icon-192.png" aria-label="Cryptrace" />
               <Typography variant="subtitle1">CrypTrace</Typography>
               <IconButton onClick={handleDrawerClose}>
@@ -178,6 +185,10 @@ export default function App() {
       <main className={classes.content}>
         <Switch>
           <Route path="/allcoins" component={CoinDrawer} />
+          <Route path="/news" component={News} />
+          <Route path="/wallets" component={News} />
+          <Route path="/exchanges" component={Exchanges} />
+          <Route path="/mining" component={News} />
           <Route path="/:symbol" component={CoinDetail} />
           <Route exact path="/" component={HomePage} />
         </Switch>

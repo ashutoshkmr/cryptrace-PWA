@@ -29,7 +29,7 @@ class HomePage extends Component {
 
   render() {
     return (
-      <Fragment>
+      <div className="homepage-container">
         {this.props.favourites && this.props.favourites.length > 0 ? (
           <div className="favourites-container">
             <Favourites></Favourites>
@@ -84,7 +84,14 @@ class HomePage extends Component {
                       <TableCell>{priceInfo.PRICE}</TableCell>
                       <TableCell>
                         <Tooltip title="Change in 24 hour" arrow>
-                          <Typography variant="subtitle1">
+                          <Typography
+                            variant="subtitle1"
+                            color={
+                              priceInfo.CHANGE24HOUR.startsWith("-")
+                                ? "error"
+                                : "initial"
+                            }
+                          >
                             {priceInfo.CHANGE24HOUR}
                           </Typography>
                         </Tooltip>
@@ -112,7 +119,7 @@ class HomePage extends Component {
         ) : (
           <ShowError errorMessage={this.props.topCoins.errorMsg} />
         )}
-      </Fragment>
+      </div>
     );
   }
 }

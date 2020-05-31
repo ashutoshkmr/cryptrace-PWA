@@ -6,6 +6,12 @@
   font-size: 18px;
   overflow-x: hidden;
 }
-body{
+body {
   min-height: 100vh;
+}
+.pointer {
+  cursor: pointer;
+}
+.container {
+  padding: 24px;
 }

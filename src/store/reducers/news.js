@@ -40,8 +40,10 @@ export default slice.reducer;
 
 export const fetchNewsList = () => {
   const url = "/data/v2/news/";
+  const apiKeyRequired = false;
   return apiCallBegan({
     url,
+    apiKeyRequired,
     params: {
       lang: "EN",
     },

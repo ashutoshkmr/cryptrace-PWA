@@ -10,7 +10,7 @@ class News extends Component {
   }
   render() {
     return (
-      <div>
+      <div className="container">
         {this.props.news.loading ? (
           <BulletList />
         ) : (
