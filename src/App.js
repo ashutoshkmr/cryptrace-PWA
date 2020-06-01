@@ -21,6 +21,7 @@ import Exchanges from "./components/exchanges/Exchanges";
 import HomePage from "./components/HomePage/HomePage";
 import News from "./components/news/news";
 import Walltes from "./components/wallets/wallets";
+import Mining from "./components/mining/mining";
 
 const drawerWidth = 240;
 
@@ -112,7 +113,7 @@ const pages = [
   {
     title: "Mining",
     icon: <GavelIcon />,
-    link: "/pools",
+    link: "/mining",
     // https://min-api.cryptocompare.com/data/mining/pools/general
     // https://min-api.cryptocompare.com/data/mining/companies/general
     // https://min-api.cryptocompare.com/data/cards/general
@@ -189,7 +190,7 @@ export default function App() {
           <Route path="/news" component={News} />
           <Route path="/wallets" component={Walltes} />
           <Route path="/exchanges" component={Exchanges} />
-          <Route path="/mining" component={News} />
+          <Route path="/mining" component={Mining} />
           <Route path="/:symbol" component={CoinDetail} />
           <Route exact path="/" component={HomePage} />
         </Switch>

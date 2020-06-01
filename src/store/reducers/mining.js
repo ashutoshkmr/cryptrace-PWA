@@ -5,7 +5,7 @@ import { apiCallBegan } from "../apiActions";
 const slice = createSlice({
   name: "mining",
   initialState: {
-    mining: [],
+    list: [],
     loading: true,
     hasError: false,
     errorMsg: "",
@@ -17,10 +17,7 @@ const slice = createSlice({
     },
 
     miningListReceived: (mining, action) => {
-      mining.coins = action.payload.Data.map((e) => ({
-        coinInfo: e.CoinInfo,
-        display: e.DISPLAY.USD,
-      }));
+      mining.list = Object.values(action.payload.Data);
       mining.loading = false;
       mining.hasError = false;
     },
@@ -41,10 +38,12 @@ export const {
 
 export default slice.reducer;
 
-export const loadcoinsList = () => {
+export const fetchMiningList = () => {
   const url = "/data/mining/pools/general";
+  const apiKeyRequired = true;
   return apiCallBegan({
     url,
+    apiKeyRequired,
     params: {},
     onStart: miningListRequested.type,
     onSuccess: miningListReceived.type,

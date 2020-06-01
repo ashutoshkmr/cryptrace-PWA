@@ -1,22 +1,9 @@
 // @ts-check
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader/CardHeader";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import Grid from "@material-ui/core/Grid/Grid";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Switch from "@material-ui/core/Switch";
-import Typography from "@material-ui/core/Typography";
-import ShowChart from "@material-ui/icons/ShowChart";
-import Chart from "chart.js";
-import moment from "moment";
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import * as io from "socket.io-client";
-import CCC from "../../helpers/socketParse";
-import { ma } from "../../moving-averages";
+import { BulletList } from "react-content-loader";
+import { connect } from "react-redux";
+import { fetchCurrentCoin } from "../../store/reducers/coin";
+import { fetchChartData } from '../../store/reducers/chart';
 let chart;
 
 class CoinDetail extends Component {
@@ -38,189 +25,183 @@ class CoinDetail extends Component {
   //   time: this.props.location.state.historyTime,
   // };
 
-  socket = io.connect("https://streamer.cryptocompare.com/");
+  // socket = io.connect("https://streamer.cryptocompare.com/");
 
-  unpackLiveData(data) {
-    let to = data["TOSYMBOL"];
-    let from = data["FROMSYMBOL"];
-    let tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-    let pair = from + to;
-    let LivePrice = {};
-    if (!LivePrice.hasOwnProperty(pair)) {
-      LivePrice[pair] = {};
-    }
+  // unpackLiveData(data) {
+  //   let to = data["TOSYMBOL"];
+  //   let from = data["FROMSYMBOL"];
+  //   let tsym = CCC.STATIC.CURRENCY.getSymbol(to);
+  //   let pair = from + to;
+  //   let LivePrice = {};
+  //   if (!LivePrice.hasOwnProperty(pair)) {
+  //     LivePrice[pair] = {};
+  //   }
 
-    for (var key in data) {
-      LivePrice[pair][key] = data[key];
-    }
+  //   for (var key in data) {
+  //     LivePrice[pair][key] = data[key];
+  //   }
 
-    if (LivePrice[pair]["LASTTRADEID"]) {
-      LivePrice[pair]["LASTTRADEID"] = parseInt(
-        LivePrice[pair]["LASTTRADEID"],
-        10
-      ).toFixed(0);
-    }
-    LivePrice[pair]["CHANGE24HOUR"] = CCC.convertValueToDisplay(
-      tsym,
-      LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]
-    );
-    LivePrice[pair]["CHANGE24HOURPCT"] =
-      (
-        ((LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]) /
-          LivePrice[pair]["OPEN24HOUR"]) *
-        100
-      ).toFixed(2) + "%";
-    this.updateData(LivePrice[pair]);
-  }
-  updateData = (data) => {
-    if (data.PRICE && chart) {
-      if (this.liveData.price.length > 30) {
-        this.liveData.price.shift();
-        this.liveData.time.shift();
-      }
-      this.liveData.price.push(data.PRICE);
-      this.liveData.time.push(moment(data.LASTUPDATE * 1000).format("LLL"));
+  //   if (LivePrice[pair]["LASTTRADEID"]) {
+  //     LivePrice[pair]["LASTTRADEID"] = parseInt(
+  //       LivePrice[pair]["LASTTRADEID"],
+  //       10
+  //     ).toFixed(0);
+  //   }
+  //   LivePrice[pair]["CHANGE24HOUR"] = CCC.convertValueToDisplay(
+  //     tsym,
+  //     LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]
+  //   );
+  //   LivePrice[pair]["CHANGE24HOURPCT"] =
+  //     (
+  //       ((LivePrice[pair]["PRICE"] - LivePrice[pair]["OPEN24HOUR"]) /
+  //         LivePrice[pair]["OPEN24HOUR"]) *
+  //       100
+  //     ).toFixed(2) + "%";
+  //   this.updateData(LivePrice[pair]);
+  // }
+  // updateData = (data) => {
+  //   if (data.PRICE && chart) {
+  //     if (this.liveData.price.length > 30) {
+  //       this.liveData.price.shift();
+  //       this.liveData.time.shift();
+  //     }
+  //     this.liveData.price.push(data.PRICE);
+  //     this.liveData.time.push(moment(data.LASTUPDATE * 1000).format("LLL"));
 
-      chart.data.datasets.forEach((element) => {
-        element.data = this.liveData.price;
-      });
-      chart.data.labels = this.liveData.time;
-      this.drawMa();
-      this.drawBollinger();
-      chart.update();
-    }
-  };
-  drawMa() {
-    if (this.state.MA) {
-      let m = ma(this.liveData.price, 5);
-      this.liveData["ma"] = m;
-      chart.data.datasets.push({
-        fill: false,
-        borderColor: "blue",
-        pointBorderColor: "blue",
-        pointBackgroundColor: "#fff",
-        data: this.liveData.ma,
-      });
-    }
-  }
-  drawBollinger() {
-    if (this.state.BB) {
-      let mean = Math.floor(
-        this.liveData.price.reduce((a, b) => a + b) / this.liveData.price.length
-      );
-      let Squared_sum_diff_from_mean = this.liveData.price
-        .map((e) => Math.pow(mean - e, 2))
-        .reduce((a, b) => a + b);
-      let deviation = Math.sqrt(
-        Squared_sum_diff_from_mean / (this.liveData.price.length - 1)
-      );
-      let upper_band = this.liveData.price.map((e) => e + 2 * deviation);
-      let lower_band = this.liveData.price.map((e) => e - 2 * deviation);
-      chart.data.datasets.push({
-        fill: false,
-        borderColor: "green",
-        pointBorderColor: "green",
-        pointBackgroundColor: "#fff",
-        data: upper_band,
-      });
-      chart.data.datasets.push({
-        fill: false,
-        borderColor: "red",
-        pointBorderColor: "red",
-        pointBackgroundColor: "#fff",
-        data: lower_band,
-      });
-    }
-  }
-  emitSubscription() {
-    let subs = "5~CCCAGG~" + this.state.Symbol + "~USD";
-    this.socket.emit("SubAdd", {
-      subs: [subs],
-    });
-  }
-  handleClick = (event) => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-  handleChange = (name) => (event) => {
-    this.setState({ [name]: event.target.checked });
-    if (this.state.MA) {
-      this.drawMa();
-      chart.update();
-    }
-    if (this.state.BB) {
-      this.drawBollinger();
-    }
-    chart.update();
-  };
+  //     chart.data.datasets.forEach((element) => {
+  //       element.data = this.liveData.price;
+  //     });
+  //     chart.data.labels = this.liveData.time;
+  //     this.drawMa();
+  //     this.drawBollinger();
+  //     chart.update();
+  //   }
+  // };
+  // drawMa() {
+  //   if (this.state.MA) {
+  //     let m = ma(this.liveData.price, 5);
+  //     this.liveData["ma"] = m;
+  //     chart.data.datasets.push({
+  //       fill: false,
+  //       borderColor: "blue",
+  //       pointBorderColor: "blue",
+  //       pointBackgroundColor: "#fff",
+  //       data: this.liveData.ma,
+  //     });
+  //   }
+  // }
+  // drawBollinger() {
+  //   if (this.state.BB) {
+  //     let mean = Math.floor(
+  //       this.liveData.price.reduce((a, b) => a + b) / this.liveData.price.length
+  //     );
+  //     let Squared_sum_diff_from_mean = this.liveData.price
+  //       .map((e) => Math.pow(mean - e, 2))
+  //       .reduce((a, b) => a + b);
+  //     let deviation = Math.sqrt(
+  //       Squared_sum_diff_from_mean / (this.liveData.price.length - 1)
+  //     );
+  //     let upper_band = this.liveData.price.map((e) => e + 2 * deviation);
+  //     let lower_band = this.liveData.price.map((e) => e - 2 * deviation);
+  //     chart.data.datasets.push({
+  //       fill: false,
+  //       borderColor: "green",
+  //       pointBorderColor: "green",
+  //       pointBackgroundColor: "#fff",
+  //       data: upper_band,
+  //     });
+  //     chart.data.datasets.push({
+  //       fill: false,
+  //       borderColor: "red",
+  //       pointBorderColor: "red",
+  //       pointBackgroundColor: "#fff",
+  //       data: lower_band,
+  //     });
+  //   }
+  // }
+  // emitSubscription() {
+  //   let subs = "5~CCCAGG~" + this.state.Symbol + "~USD";
+  //   this.socket.emit("SubAdd", {
+  //     subs: [subs],
+  //   });
+  // }
+  // handleClick = (event) => {
+  //   this.setState({ anchorEl: event.currentTarget });
+  // };
+  // handleChange = (name) => (event) => {
+  //   this.setState({ [name]: event.target.checked });
+  //   if (this.state.MA) {
+  //     this.drawMa();
+  //     chart.update();
+  //   }
+  //   if (this.state.BB) {
+  //     this.drawBollinger();
+  //   }
+  //   chart.update();
+  // };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-  drawChart = () => {
-    let context = ReactDOM.findDOMNode(this)
-      // @ts-ignore
-      .getElementsByTagName("canvas")[0]
-      .getContext("2d");
-    let Linechart = new Chart(context, {
-      type: "line",
-      data: {
-        labels: this.liveData.time,
-        datasets: [
-          {
-            fill: false,
-            borderColor: "purple",
-            pointBorderColor: "purple",
-            pointBackgroundColor: "#fff",
-            data: this.liveData.price,
-          },
-        ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
-        animation: {
-          duration: 0,
-        },
-        scales: {
-          yAxes: [
-            {
-              display: false,
-            },
-          ],
-          xAxes: [
-            {
-              display: false,
-            },
-          ],
-        },
-      },
-    });
-    chart = Linechart;
-  };
+  // handleClose = () => {
+  //   this.setState({ anchorEl: null });
+  // };
+  // drawChart = () => {
+  //   let context = ReactDOM.findDOMNode(this)
+  //     // @ts-ignore
+  //     .getElementsByTagName("canvas")[0]
+  //     .getContext("2d");
+  //   let Linechart = new Chart(context, {
+  //     type: "line",
+  //     data: {
+  //       labels: this.liveData.time,
+  //       datasets: [
+  //         {
+  //           fill: false,
+  //           borderColor: "purple",
+  //           pointBorderColor: "purple",
+  //           pointBackgroundColor: "#fff",
+  //           data: this.liveData.price,
+  //         },
+  //       ],
+  //     },
+  //     options: {
+  //       legend: {
+  //         display: false,
+  //       },
+  //       animation: {
+  //         duration: 0,
+  //       },
+  //       scales: {
+  //         yAxes: [
+  //           {
+  //             display: false,
+  //           },
+  //         ],
+  //         xAxes: [
+  //           {
+  //             display: false,
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   });
+  //   chart = Linechart;
+  // };
   componentDidMount() {
     console.log(this.props);
-    const coinId = parseInt(this.props.match.params.id, 10);
-    const coin =
-      this.props.location.state && this.props.location.state.coin
-        ? this.props.location.state.coin
-        : null;
-    if (!coinId || !coin) {
-      this.props.history.replace("/");
-    } else {
-      this.socket.on("m", (message) => {
-        let res = {};
-        let messageType = message.substring(0, message.indexOf("~"));
+    this.props.fetchCurrentCoin(this.props.match.params.symbol);
+    this.props.fetchChartData(this.props.match.params.symbol);
+    // this.socket.on("m", (message) => {
+    //   let res = {};
+    //   let messageType = message.substring(0, message.indexOf("~"));
 
-        if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
-          res = CCC.CURRENT.unpack(message);
-          this.unpackLiveData(res);
-        }
-      });
-      // this.drawChart();
-      // this.emitSubscription();
-    }
+    //   if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
+    //     res = CCC.CURRENT.unpack(message);
+    //     this.unpackLiveData(res);
+    //   }
+    // });
+    // this.drawChart();
+    // this.emitSubscription();
   }
+
   componentWillUnmount() {
     // @ts-ignore
     // this.socket.disconnect();
@@ -376,7 +357,36 @@ class CoinDetail extends Component {
     //     </Card>
     //   </div>
     // );
-    return <div>Vada PAv</div>;
+    return (
+      <div>
+        {this.props.coin.loading ? (
+          <BulletList />
+        ) : (
+          JSON.stringify(this.props.coin)
+        )}
+
+        {this.props.chart.loading ? (
+          <BulletList />
+        ) : (
+          JSON.stringify(this.props.chart)
+        )}
+      </div>
+    );
   }
 }
-export default CoinDetail;
+
+const mapStateToProps = (state) => {
+  return {
+    coin: state.entities.currentCoin,
+    chart: state.entities.chartData,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchCurrentCoin: (symbol) => dispatch(fetchCurrentCoin(symbol)),
+    fetchChartData: (symbol) => dispatch(fetchChartData(symbol)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoinDetail);
