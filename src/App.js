@@ -20,6 +20,7 @@ import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
 import Exchanges from "./components/exchanges/Exchanges";
 import HomePage from "./components/HomePage/HomePage";
 import News from "./components/news/news";
+import Walltes from "./components/wallets/wallets";
 
 const drawerWidth = 240;
 
@@ -186,7 +187,7 @@ export default function App() {
         <Switch>
           <Route path="/allcoins" component={CoinDrawer} />
           <Route path="/news" component={News} />
-          <Route path="/wallets" component={News} />
+          <Route path="/wallets" component={Walltes} />
           <Route path="/exchanges" component={Exchanges} />
           <Route path="/mining" component={News} />
           <Route path="/:symbol" component={CoinDetail} />
