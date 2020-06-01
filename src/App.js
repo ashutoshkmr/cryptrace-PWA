@@ -7,7 +7,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { AccountBalance, Forum, Home, Star } from "@material-ui/icons";
+import { AccountBalance, Forum, Home } from "@material-ui/icons";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import AppsIcon from "@material-ui/icons/Apps";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -16,12 +16,12 @@ import clsx from "clsx";
 import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
 import CoinDetail from "./components/CoinDetail/CoinDetail";
-import CoinDrawer from "./components/CoinDrawer/CoinDrawer";
+import CoinList from "./components/CoinList/CoinList";
 import Exchanges from "./components/exchanges/Exchanges";
 import HomePage from "./components/HomePage/HomePage";
+import Mining from "./components/mining/mining";
 import News from "./components/news/news";
 import Walltes from "./components/wallets/wallets";
-import Mining from "./components/mining/mining";
 
 const drawerWidth = 240;
 
@@ -186,7 +186,7 @@ export default function App() {
       </Drawer>
       <main className={classes.content}>
         <Switch>
-          <Route path="/allcoins" component={CoinDrawer} />
+          <Route path="/allcoins" component={CoinList} />
           <Route path="/news" component={News} />
           <Route path="/wallets" component={Walltes} />
           <Route path="/exchanges" component={Exchanges} />
