@@ -31,4 +31,4 @@ const Main = () => (
 );
 
 ReactDOM.render(<Main />, document.getElementById("root"));
-// registerServiceWorker();
+registerServiceWorker();

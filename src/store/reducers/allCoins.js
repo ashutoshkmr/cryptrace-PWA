@@ -5,7 +5,7 @@ import { apiCallBegan } from "../apiActions";
 const slice = createSlice({
   name: "allCoins",
   initialState: {
-    coinList: {},
+    list: {},
     sortOrder: [],
     loading: true,
     hasError: false,
@@ -18,10 +18,11 @@ const slice = createSlice({
     },
 
     coinsListReceived: (coinList, action) => {
-      coinList.coins = action.payload.Data.map((e) => ({
-        coinInfo: e.CoinInfo,
-        display: e.DISPLAY.USD,
-      }));
+      let list = Object.values(action.payload.Data);
+      list = list.sort(
+        (a, b) => parseInt(a.SortOrder, 10) - parseInt(b.SortOrder, 10)
+      );
+      coinList.list = list;
       coinList.loading = false;
       coinList.hasError = false;
     },
@@ -42,10 +43,12 @@ export const {
 
 export default slice.reducer;
 
-export const loadcoinsList = () => {
+export const fetchCoinList = () => {
   const url = "/data/all/coinlist";
+  const apiKeyRequired = true;
   return apiCallBegan({
     url,
+    apiKeyRequired,
     params: {
       limit: 100,
       tsym: "USD",
