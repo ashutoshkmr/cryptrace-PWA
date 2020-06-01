@@ -8,14 +8,26 @@ import {
   Link,
   Tooltip,
   Typography,
+  makeStyles,
 } from "@material-ui/core";
 import LanguageIcon from "@material-ui/icons/Language";
 import Rating from "@material-ui/lab/Rating";
 import React from "react";
+
+const useStyles = makeStyles((theme) => ({
+  label: {
+    flex: "0 0 100px",
+  },
+  "card-header": { paddingBottom: 0 },
+}));
+
 export const ExchangeCard = ({ item }) => {
+  const classes = useStyles();
+
   return (
     <Card>
       <CardHeader
+        className={classes["card-header"]}
         avatar={
           <Avatar
             aria-label={item.Name}
@@ -35,12 +47,16 @@ export const ExchangeCard = ({ item }) => {
       <CardContent>
         <Tooltip title={`From ${item.Rating.TotalUsers} users.`}>
           <Box display="flex" alignItems="center" mb={1}>
-            <Typography variant="subtitle2">Avg. Rating:</Typography>
+            <Typography className={classes.label} variant="subtitle2">
+              Avg. Rating:
+            </Typography>
             <Rating name="disabled" value={item.Rating.Avg} />
           </Box>
         </Tooltip>
         <Box display="flex" mb={1} className="pointer">
-          <Typography variant="subtitle2">Deposit Methods :</Typography>
+          <Typography className={classes.label} variant="subtitle2">
+            Deposit Methods :
+          </Typography>
           <Tooltip title={item.DepositMethods}>
             <Typography variant="subtitle2">
               {item.DepositMethods.substr(0, 64)}
@@ -48,7 +64,9 @@ export const ExchangeCard = ({ item }) => {
           </Tooltip>
         </Box>
         <Box display="flex" mb={1} className="pointer">
-          <Typography variant="subtitle2">Withdrawl Methods :</Typography>
+          <Typography className={classes.label} variant="subtitle2">
+            Withdrawl Methods :
+          </Typography>
           <Tooltip title={item.WithdrawalMethods}>
             <Typography variant="subtitle2">
               {item.WithdrawalMethods.substr(0, 64)}
