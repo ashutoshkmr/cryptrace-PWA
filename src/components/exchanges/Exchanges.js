@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { fetchExchangesList } from "../../store/reducers/exchanges";
 import { ShowError } from "../error/error";
 import "./Exchange.css";
-import { ExchangeCard } from "./ExchangeList";
+import { ExchangeCard } from "./ExchangeCard";
 
 class Exchanges extends Component {
   componentDidMount() {
