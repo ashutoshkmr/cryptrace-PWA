@@ -5,7 +5,7 @@ import { apiCallBegan } from "../apiActions";
 const slice = createSlice({
   name: "wallets",
   initialState: {
-    wallets: [],
+    list: [],
     loading: true,
     hasError: false,
     errorMsg: "",
@@ -17,10 +17,7 @@ const slice = createSlice({
     },
 
     walletListReceived: (wallets, action) => {
-      wallets.coins = action.payload.Data.map((e) => ({
-        coinInfo: e.CoinInfo,
-        display: e.DISPLAY.USD,
-      }));
+      wallets.list = Object.values(action.payload.Data);
       wallets.loading = false;
       wallets.hasError = false;
     },
@@ -41,10 +38,12 @@ export const {
 
 export default slice.reducer;
 
-export const loadcoinsList = () => {
+export const fetchWalletList = () => {
   const url = "/data/wallets/general";
+  const apiKeyRequired = true;
   return apiCallBegan({
     url,
+    apiKeyRequired,
     params: {},
     onStart: walletListRequested.type,
     onSuccess: walletListReceived.type,
