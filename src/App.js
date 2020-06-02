@@ -1,4 +1,14 @@
-import { Avatar, Drawer, Tooltip, Typography } from "@material-ui/core";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Drawer,
+  SwipeableDrawer,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -12,6 +22,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import AppsIcon from "@material-ui/icons/Apps";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import GavelIcon from "@material-ui/icons/Gavel";
+import MenuIcon from "@material-ui/icons/Menu";
 import clsx from "clsx";
 import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
@@ -124,6 +135,7 @@ export default function App() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -133,58 +145,103 @@ export default function App() {
     setOpen(false);
   };
 
+  const handleMobileDrawerOpen = () => {
+    setMobileOpen(true);
+  };
+
+  const handleMobileDrawerClose = () => {
+    setMobileOpen(false);
+  };
+
+  const list = (anchor) => (
+    <List>
+      {pages.map((p) => {
+        return (
+          <Link className={classes.link} to={p.link} key={p.title}>
+            <Tooltip title={p.title} arrow>
+              <ListItem button key={p.title} data-for={p.title}>
+                <ListItemIcon>{p.icon}</ListItemIcon>
+                <ListItemText primary={p.title} />
+              </ListItem>
+            </Tooltip>
+          </Link>
+        );
+      })}
+    </List>
+  );
+
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Drawer
-        elevation={0}
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
+
+      <Box display={{ xs: "block", sm: "none" }}>
+        <SwipeableDrawer
+          anchor="left"
+          open={mobileOpen}
+          onClose={handleMobileDrawerClose}
+          onOpen={handleMobileDrawerOpen}
+        >
+          {list()}
+        </SwipeableDrawer>
+      </Box>
+      <Box display={{ xs: "none", sm: "block" }}>
+        <Drawer
+          elevation={0}
+          variant="permanent"
+          className={clsx(classes.drawer, {
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.toolbar}>
-          {!open ? (
-            <Avatar
-              onClick={handleDrawerOpen}
-              src="/icon-192.png"
-              aria-label="Cryptrace"
-              className="pointer"
-            />
-          ) : (
-            <div className={classes.brandExpanded}>
-              <Avatar src="/icon-192.png" aria-label="Cryptrace" />
-              <Typography variant="subtitle1">CrypTrace</Typography>
-              <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-          )}
-        </div>
-        <Divider />
-        <List>
-          {pages.map((p) => {
-            return (
-              <Link className={classes.link} to={p.link} key={p.title}>
-                <Tooltip title={p.title} arrow>
-                  <ListItem button key={p.title} data-for={p.title}>
-                    <ListItemIcon>{p.icon}</ListItemIcon>
-                    <ListItemText primary={p.title} />
-                  </ListItem>
-                </Tooltip>
-              </Link>
-            );
           })}
-        </List>
-      </Drawer>
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar}>
+            {!open ? (
+              <Avatar
+                onClick={handleDrawerOpen}
+                src="/icon-192.png"
+                aria-label="Cryptrace"
+                className="pointer"
+              />
+            ) : (
+              <div className={classes.brandExpanded}>
+                <Avatar src="/icon-192.png" aria-label="Cryptrace" />
+                <Typography variant="subtitle1">CrypTrace</Typography>
+                <IconButton onClick={handleDrawerClose}>
+                  <ChevronLeftIcon />
+                </IconButton>
+              </div>
+            )}
+          </div>
+          <Divider />
+          {list()}
+        </Drawer>
+      </Box>
       <main className={classes.content}>
+        <Box display={{ xs: "block", sm: "none" }}>
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                style={{ flex: "1", textAlign: "center" }}
+              >
+                CrypTrace
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </Box>
         <Switch>
           <Route path="/allcoins" component={CoinList} />
           <Route path="/news" component={News} />
