@@ -83,6 +83,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: "#eeeff1",
     height: "100vh",
+    padding: "0 24px",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "56px",
+    },
   },
   link: {
     textDecoration: "none",
@@ -125,9 +129,6 @@ const pages = [
     title: "Mining",
     icon: <GavelIcon />,
     link: "/mining",
-    // https://min-api.cryptocompare.com/data/mining/pools/general
-    // https://min-api.cryptocompare.com/data/mining/companies/general
-    // https://min-api.cryptocompare.com/data/cards/general
   },
 ];
 
@@ -153,11 +154,16 @@ export default function App() {
     setMobileOpen(false);
   };
 
-  const list = (anchor) => (
+  const list = (onclose) => (
     <List>
       {pages.map((p) => {
         return (
-          <Link className={classes.link} to={p.link} key={p.title}>
+          <Link
+            onClick={onclose}
+            className={classes.link}
+            to={p.link}
+            key={p.title}
+          >
             <Tooltip title={p.title} arrow>
               <ListItem button key={p.title} data-for={p.title}>
                 <ListItemIcon>{p.icon}</ListItemIcon>
@@ -181,7 +187,7 @@ export default function App() {
           onClose={handleMobileDrawerClose}
           onOpen={handleMobileDrawerOpen}
         >
-          {list()}
+          {list(handleMobileDrawerClose)}
         </SwipeableDrawer>
       </Box>
       <Box display={{ xs: "none", sm: "block" }}>
@@ -218,30 +224,27 @@ export default function App() {
             )}
           </div>
           <Divider />
-          {list()}
+          {list(handleDrawerClose)}
         </Drawer>
       </Box>
+      <Box display={{ xs: "block", sm: "none" }}>
+        <AppBar position="fixed" elevation={0}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" style={{ flex: "1", textAlign: "center" }}>
+              CrypTrace
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </Box>
       <main className={classes.content}>
-        <Box display={{ xs: "block", sm: "none" }}>
-          <AppBar position="static">
-            <Toolbar>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={() => setMobileOpen(!mobileOpen)}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                style={{ flex: "1", textAlign: "center" }}
-              >
-                CrypTrace
-              </Typography>
-            </Toolbar>
-          </AppBar>
-        </Box>
         <Switch>
           <Route path="/allcoins" component={CoinList} />
           <Route path="/news" component={News} />
