@@ -28,7 +28,7 @@ class CoinDetail extends Component {
     return (
       <Box pt={3}>
         <Card style={{ display: "flex", flex: 1 }}>
-          <Box display="flex" flex="0 0 120px">
+          <Box display="flex" flex="0 0 100px">
             <CardHeader
               avatar={
                 <Avatar src={`https://cryptocompare.com${coin.IMAGEURL}`} />
@@ -45,7 +45,12 @@ class CoinDetail extends Component {
                 {coin.PRICE}
               </Typography>
             </Box>
-            <Box flex="1" textAlign="right" p={0.5}>
+            <Box
+              flex="1"
+              textAlign="right"
+              p={0.5}
+              display={{ xs: "none", sm: "none", md: "block" }}
+            >
               <Typography display="block" variant="caption">
                 MARKET CAP.
               </Typography>
