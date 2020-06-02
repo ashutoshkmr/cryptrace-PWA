@@ -8,6 +8,7 @@ import miningReducer from "./reducers/mining";
 import newsReducer from "./reducers/news";
 import topCoinsReducer from "./reducers/topCoins";
 import WalletReducer from "./reducers/wallets";
+import socialStatsReducer from "./reducers/socialStats";
 
 export default combineReducers({
   allCoins: allCoinsReducer,
@@ -19,4 +20,5 @@ export default combineReducers({
   wallets: WalletReducer,
   exchanges: exchangesReducer,
   favourites: favouritesReducer,
+  socialStats: socialStatsReducer,
 });

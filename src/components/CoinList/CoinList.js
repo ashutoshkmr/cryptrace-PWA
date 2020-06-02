@@ -1,12 +1,19 @@
-import { Avatar, Box, Link, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Box,
+  LinearProgress,
+  Link,
+  Typography,
+} from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import { Link as LinkIcon } from "@material-ui/icons";
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { BulletList } from "react-content-loader";
 import { connect } from "react-redux";
 import { AutoSizer, List } from "react-virtualized";
 import { fetchCoinList } from "../../store/reducers/allCoins";
 import { ShowError } from "../error/error";
+
 class AllCoinsList extends Component {
   componentDidMount() {
     this.props.fetchCoinList();
@@ -56,21 +63,26 @@ class AllCoinsList extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div style={{ height: "100%" }}>
         {this.props.allCoins.loading ? (
-          <BulletList />
+          <Fragment>
+            <LinearProgress />
+            <BulletList />
+          </Fragment>
         ) : !this.props.allCoins.hasError ? (
-          <AutoSizer>
-            {({ width, height }) => (
-              <List
-                height={height}
-                rowCount={this.props.allCoins.list.length}
-                rowHeight={64}
-                rowRenderer={this._rowRenderer}
-                width={width}
-              />
-            )}
-          </AutoSizer>
+          <Box pt={3} style={{ height: "100%" }}>
+            <AutoSizer>
+              {({ width, height }) => (
+                <List
+                  height={height}
+                  rowCount={this.props.allCoins.list.length}
+                  rowHeight={64}
+                  rowRenderer={this._rowRenderer}
+                  width={width}
+                />
+              )}
+            </AutoSizer>
+          </Box>
         ) : (
           <ShowError errorMessage={this.props.allCoins.errorMsg} />
         )}
