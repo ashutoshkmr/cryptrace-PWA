@@ -1,10 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "../apiActions";
+import moment from "moment";
 
 const slice = createSlice({
   name: "chartData",
   initialState: {
-    data: {},
+    data: {
+      labels: [],
+      prices: [],
+    },
     coinSymbol: null,
     loading: true,
     hasError: false,
@@ -16,24 +20,13 @@ const slice = createSlice({
     },
 
     chartDataReceived: (chartData, action) => {
-      chartData.data[chartData.coinSymbol] = action.payload["Data"];
-      // {
-      // Data:[
-      //{
-      // close: 9156.6
-      // conversionSymbol: ""
-      // conversionType: "direct"
-      // high: 9156.87
-      // low: 9155.63
-      // open: 9155.68
-      // time: 1590584940
-      // volumefrom: 4.783
-      // volumeto: 43793.18
-      //}
-      // ],
-      // TimeFrom: 1590584940
-      // TimeTo: 1590671340
-      // }
+      const dataPoints = action.payload["Data"].Data;
+      const labels = dataPoints.map((p) =>
+        moment(p.time * 1000).format("h:mm a")
+      );
+      const prices = dataPoints.map((p) => p.high);
+      chartData.data.labels = labels;
+      chartData.data.prices = prices;
       chartData.loading = false;
       chartData.hasError = false;
     },
@@ -61,6 +54,7 @@ export const fetchChartData = (coinSymbol) => {
     params: {
       fsym: coinSymbol,
       tsym: "USD",
+      limit: 100,
     },
     onStart: chartDataRequested.type,
     onSuccess: chartDataReceived.type,
